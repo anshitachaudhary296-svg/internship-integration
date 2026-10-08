@@ -1,0 +1,22 @@
+{
+  "name": "internship-integration",
+  "version": "1.0.0",
+  "description": "Secure Application Integration of Internship Board Frontend and REST API Backend (Task 04)",
+  "scripts": {
+    "start": "npm --prefix Backend/internship-api start",
+    "dev": "npm --prefix Backend/internship-api run dev",
+    "test": "npm --prefix Backend/internship-api test",
+    "db:init": "npm --prefix Backend/internship-api run db:init",
+    "db:seed": "npm --prefix Backend/internship-api run db:seed"
+  },
+  "keywords": [
+    "internship",
+    "security",
+    "fullstack",
+    "integration",
+    "sqlite",
+    "express"
+  ],
+  "author": "",
+  "license": "MIT"
+}
