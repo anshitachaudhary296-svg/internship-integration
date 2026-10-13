@@ -9,6 +9,21 @@ async function runAllVerifications() {
 
   let allPassed = true;
 
+  // Pre-check: Verify server is online
+  try {
+    const healthCheck = await fetch('http://localhost:5000/api/health', {
+      signal: AbortSignal.timeout(3000)
+    });
+    if (!healthCheck.ok) {
+      throw new Error(`Server responded with HTTP ${healthCheck.status}`);
+    }
+  } catch (err) {
+    console.error('❌ Could not connect to the API server at http://localhost:5000');
+    console.error('👉 Please make sure the server is running in another terminal before running this script:');
+    console.error('   npm start   (or npm run dev)\n');
+    process.exit(1);
+  }
+
   // 1. Frontend loads from http://localhost:5000/
   const htmlRes = await fetch('http://localhost:5000/');
   const cssRes = await fetch('http://localhost:5000/style.css');

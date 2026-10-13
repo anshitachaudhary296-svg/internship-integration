@@ -1,7 +1,7 @@
-# 🛡️ Security Policy & Architecture - Task 04
+# 🛡️ Security Policy & Architecture - Task 05 Capstone
 
 ## Overview
-This document outlines the security controls, policies, defensive programming practices, and hardening mechanisms implemented for **InternPulse / Internship Management Application Integration (Task 04: Secure Application Integration)**.
+This document outlines the security controls, policies, defensive programming practices, and hardening mechanisms implemented for **InternPulse / Internship Management Application Integration (Task 05: Production-Ready Capstone)**.
 
 The integration connects the frontend client board (`Frontend/internship-board`) with the Node.js/Express SQLite REST backend (`Backend/internship-api`) with multi-layered defenses spanning the network, application, database, and client tiers.
 
@@ -17,6 +17,8 @@ The integration connects the frontend client board (`Frontend/internship-board`)
 | **Input Validation** | Custom middleware (`validateInternship`, `validateApplication`) | Rejects malformed, incomplete, or out-of-range payloads with HTTP 400 |
 | **SQL Injection Protection** | Parameterized queries (`?` placeholders via SQLite3) | Completely neutralizes SQL injection vulnerabilities |
 | **Safe Error Handling** | Centralized `errorHandler` & `SyntaxError` catch | Prevents stack trace disclosure and handles malformed JSON safely |
+| **Safe Structured Logging** | Custom `logger.js` with `sanitize()` | Logs duration and status while automatically scrubbing passwords, tokens, API keys, and Bearer auth |
+| **Health Probe Isolation** | Dedicated `/api/health` with SQLite ping | Exposes runtime uptime and memory diagnostics without revealing internal environment secrets |
 | **Secrets & Configuration** | `dotenv` + `.env.example` template | Prevents hardcoding sensitive credentials in source code |
 | **Client Duplicate Defense** | In-flight submission locking (`isSubmittingApplication`) | Prevents double-submission and duplicate records from quick clicks |
 
@@ -161,3 +163,23 @@ const result = await query.run(insertSql, [
 1. **HTML Escaping**: All dynamic rendering in `Frontend/internship-board/script.js` routes through `escapeHtml()` to prevent Cross-Site Scripting (XSS).
 2. **Duplicate In-Flight Submission Blocking**: The application form sets an in-flight flag (`isSubmittingApplication = true`) and disables submit buttons during network requests, preventing double-billing or duplicate records.
 3. **Graceful Network Boundaries**: Live API requests include timeout handling, user-friendly error banners, and recovery retry actions.
+
+---
+
+## 9. Safe Structured Logging & Automatic Secret Redaction (Task 05)
+
+To ensure enterprise-grade observability without compliance violations or data leaks, the backend implements a zero-trust logging pipeline (`Backend/internship-api/src/utils/logger.js`):
+
+- **Automatic Field Masking**: Any incoming payload, header, or query containing sensitive keys (`password`, `token`, `secret`, `authorization`, `cookie`, `credit_card`, `apiKey`, `api_key`) is intercepted and masked with `[REDACTED]`.
+- **Bearer Token Pattern Scrubbing**: String values matching `Bearer <token>` patterns are stripped using regex before log emission.
+- **Leveled Output**: Logs are segregated into `DEBUG`, `INFO`, `WARN`, and `ERROR` levels with ISO 8601 timestamps and request duration metrics (`durationMs`).
+- **Test Mode Suppression**: Log noise is silenced during test execution (`NODE_ENV === 'test'`) to ensure clean CI/CD output.
+
+---
+
+## 10. Accessibility & Visual Input Defenses (WCAG 2.5.5)
+
+- **Touch Target Defense**: In accordance with WCAG 2.5.5, all interactive elements (buttons, close icons, dropdown selects, and input fields) have a minimum dimension of `44x44px` to eliminate errant clicks on mobile devices.
+- **Focus Indicator Enforcement**: Unambiguous keyboard navigation rings (`:focus-visible`) prevent visual confusion during rapid keyboard input.
+- **Screen Reader Announcements**: Form error spans utilize `role="alert"` and form inputs define `aria-required="true"` and `aria-describedby` for assistive technologies.
+

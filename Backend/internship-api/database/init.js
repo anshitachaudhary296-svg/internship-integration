@@ -5,12 +5,11 @@ const { query, dbPath } = require('./db');
 const schemaPath = path.resolve(__dirname, 'schema.sql');
 const seedPath = path.resolve(__dirname, 'seed.sql');
 
-async function initDatabase(options = { seed: true, force: false }) {
+async function initDatabase({ seed = true, force = false } = {}) {
   try {
     console.log(`📦 Initializing SQLite database at: ${dbPath}`);
 
-
-    if (options.force) {
+    if (force) {
       await query.exec('DROP TABLE IF EXISTS applications; DROP TABLE IF EXISTS internships;');
       console.log('🔄 Forced reset: Dropped existing applications and internships tables.');
     }
@@ -23,22 +22,24 @@ async function initDatabase(options = { seed: true, force: false }) {
     await query.exec(schemaSql);
     console.log('✅ Database schema applied successfully.');
 
-
     const countResult = await query.get('SELECT COUNT(*) as count FROM internships;');
     const currentCount = countResult ? countResult.count : 0;
 
-
-    if (options.seed && (options.force || currentCount === 0)) {
-      if (fs.existsSync(seedPath)) {
-        const seedSql = fs.readFileSync(seedPath, 'utf8');
-        await query.exec(seedSql);
-        const newCountResult = await query.get('SELECT COUNT(*) as count FROM internships;');
-        console.log(`🌱 Database seeded successfully with ${newCountResult.count} records.`);
+    if (seed) {
+      if (force || currentCount === 0) {
+        if (fs.existsSync(seedPath)) {
+          const seedSql = fs.readFileSync(seedPath, 'utf8');
+          await query.exec(seedSql);
+          const newCountResult = await query.get('SELECT COUNT(*) as count FROM internships;');
+          console.log(`🌱 Database seeded successfully with ${newCountResult.count} records.`);
+        } else {
+          console.warn('⚠️ Seed file not found, skipping seeding.');
+        }
       } else {
-        console.warn('⚠️ Seed file not found, skipping seeding.');
+        console.log(`ℹ️ Database already contains ${currentCount} records. Seeding skipped.`);
       }
     } else {
-      console.log(`ℹ️ Database already contains ${currentCount} records. Seeding skipped.`);
+      console.log('ℹ️ Seeding skipped (schema-only mode).');
     }
 
     return true;
@@ -48,10 +49,9 @@ async function initDatabase(options = { seed: true, force: false }) {
   }
 }
 
-
 if (require.main === module) {
   const args = process.argv.slice(2);
-  const forceSeed = args.includes('--seed') || args.includes('-s');
+  const forceSeed = args.includes('--seed') || args.includes('-s') || args.includes('--force') || args.includes('-f');
   const schemaOnly = args.includes('--schema-only');
 
   initDatabase({ seed: !schemaOnly, force: forceSeed })

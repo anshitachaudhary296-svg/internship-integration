@@ -4,6 +4,8 @@
  * Captures all application errors and delivers consistent JSON responses.
  */
 
+const { logger } = require('../utils/logger');
+
 // eslint-disable-next-line no-unused-vars
 function errorHandler(err, req, res, next) {
   // Handle JSON syntax error from express.json()
@@ -17,9 +19,11 @@ function errorHandler(err, req, res, next) {
   const statusCode = err.statusCode || err.status || 500;
   const message = err.message || 'Internal Server Error';
 
-  if (process.env.NODE_ENV !== 'test') {
-    console.error(`🚨 [Error] ${req.method} ${req.originalUrl}:`, err);
-  }
+  logger.error(`Unhandled error during ${req.method} ${req.originalUrl}: ${message}`, {
+    statusCode,
+    url: req.originalUrl,
+    method: req.method
+  });
 
   res.status(statusCode).json({
     success: false,

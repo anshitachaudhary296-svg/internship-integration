@@ -267,7 +267,8 @@
     <div class="content-container">
 
 
-      <div id="skeleton-loader" class="internships-grid skeleton-grid" aria-hidden="true">
+      <!-- Loading Skeleton Loader (WCAG accessible loading state) -->
+      <div id="skeleton-loader" class="internships-grid skeleton-grid" role="status" aria-label="Loading opportunities" aria-live="polite">
 
         <div class="skeleton-card">
           <div class="skeleton-line skeleton-header"></div>
@@ -455,34 +456,34 @@
             <div class="form-row">
               <div class="form-group" id="group-name">
                 <label for="applicant-name" class="form-label">Full Name <span class="required">*</span></label>
-                <input type="text" id="applicant-name" name="full_name" class="form-input" required placeholder="Alex Turner" autocomplete="name">
-                <span class="form-error" id="name-error">Please enter your full name (minimum 2 characters).</span>
+                <input type="text" id="applicant-name" name="full_name" class="form-input" required aria-required="true" aria-describedby="name-error" placeholder="Alex Turner" autocomplete="name">
+                <span class="form-error" id="name-error" role="alert">Please enter your full name (minimum 2 characters).</span>
               </div>
               <div class="form-group" id="group-email">
                 <label for="applicant-email" class="form-label">Email Address <span class="required">*</span></label>
-                <input type="email" id="applicant-email" name="email" class="form-input" required placeholder="alex@university.edu" autocomplete="email">
-                <span class="form-error" id="email-error">Please enter a valid email address (e.g. name@domain.com).</span>
+                <input type="email" id="applicant-email" name="email" class="form-input" required aria-required="true" aria-describedby="email-error" placeholder="alex@university.edu" autocomplete="email">
+                <span class="form-error" id="email-error" role="alert">Please enter a valid email address (e.g. name@domain.com).</span>
               </div>
             </div>
 
             <div class="form-row">
               <div class="form-group" id="group-phone">
                 <label for="applicant-phone" class="form-label">Phone Number <span class="required">*</span></label>
-                <input type="tel" id="applicant-phone" name="phone" class="form-input" required placeholder="+1 555-234-5678" autocomplete="tel">
-                <span class="form-error" id="phone-error">Please enter a valid phone number (7 to 15 digits).</span>
+                <input type="tel" id="applicant-phone" name="phone" class="form-input" required aria-required="true" aria-describedby="phone-error" placeholder="+1 555-234-5678" autocomplete="tel">
+                <span class="form-error" id="phone-error" role="alert">Please enter a valid phone number (7 to 15 digits).</span>
               </div>
               <div class="form-group" id="group-resume">
                 <label for="applicant-resume" class="form-label">Resume URL <span class="required">*</span></label>
-                <input type="url" id="applicant-resume" name="resume_url" class="form-input" required placeholder="https://example.com/resume.pdf" autocomplete="url">
-                <span class="form-error" id="resume-error">Please enter a valid HTTP/HTTPS URL pointing to your resume.</span>
+                <input type="url" id="applicant-resume" name="resume_url" class="form-input" required aria-required="true" aria-describedby="resume-error" placeholder="https://example.com/resume.pdf" autocomplete="url">
+                <span class="form-error" id="resume-error" role="alert">Please enter a valid HTTP/HTTPS URL pointing to your resume.</span>
               </div>
             </div>
 
             <div class="form-group" id="group-cover">
               <label for="applicant-cover-message" class="form-label">Cover Message <span class="optional-tag">(Optional)</span></label>
               <textarea id="applicant-cover-message" name="cover_message" class="form-textarea" rows="3"
-                placeholder="Briefly highlight your coursework, projects, or why you are excited to join this team..."></textarea>
-              <span class="form-error" id="cover-error">Cover message cannot exceed 3000 characters.</span>
+                aria-describedby="cover-error" placeholder="Briefly highlight your coursework, projects, or why you are excited to join this team..."></textarea>
+              <span class="form-error" id="cover-error" role="alert">Cover message cannot exceed 3000 characters.</span>
             </div>
 
             <div class="modal-actions">

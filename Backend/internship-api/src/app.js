@@ -17,6 +17,8 @@ const internshipRoutes = require('./routes/internshipRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
 const { notFound } = require('./middlewares/notFound');
 const { errorHandler } = require('./middlewares/errorHandler');
+const { requestLogger } = require('./middlewares/logger');
+const { query } = require('../database/db');
 
 const app = express();
 
@@ -43,8 +45,9 @@ app.use(
 );
 
 // ============================================================
-// 3. Request Logging
+// 3. Request Logging (Safe & Structured)
 // ============================================================
+app.use(requestLogger);
 if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('dev'));
 }
@@ -158,12 +161,44 @@ app.use(express.static(frontendDir));
 app.use('/board', express.static(frontendDir));
 app.use('/app', express.static(frontendDir));
 
-app.get('/api/health', (req, res) => {
-  res.status(200).json({
-    success: true,
-    status: 'healthy',
-    timestamp: new Date().toISOString()
-  });
+app.get('/api/health', async (req, res) => {
+  const startTime = Date.now();
+  try {
+    // Actively verify database liveness
+    await query.get('SELECT 1 AS alive;');
+    const dbPingMs = Date.now() - startTime;
+    const mem = process.memoryUsage();
+
+    res.status(200).json({
+      success: true,
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      uptimeSeconds: Math.floor(process.uptime()),
+      environment: process.env.NODE_ENV || 'development',
+      nodeVersion: process.version,
+      database: {
+        status: 'connected',
+        engine: 'SQLite3',
+        pingMs: dbPingMs
+      },
+      memory: {
+        heapUsedMB: Math.round((mem.heapUsed / 1024 / 1024) * 100) / 100,
+        heapTotalMB: Math.round((mem.heapTotal / 1024 / 1024) * 100) / 100,
+        rssMB: Math.round((mem.rss / 1024 / 1024) * 100) / 100
+      }
+    });
+  } catch (err) {
+    res.status(503).json({
+      success: false,
+      status: 'unhealthy',
+      message: 'Database connection failed',
+      timestamp: new Date().toISOString(),
+      database: {
+        status: 'disconnected',
+        error: process.env.NODE_ENV === 'development' ? err.message : 'Database ping failure'
+      }
+    });
+  }
 });
 
 // ============================================================

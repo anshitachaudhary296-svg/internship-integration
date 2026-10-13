@@ -18,6 +18,7 @@ const http = require('http');
 const app = require('../src/app');
 const { initDatabase } = require('../database/init');
 const { db } = require('../database/db');
+const { sanitize } = require('../src/utils/logger');
 
 const TEST_PORT = 5055;
 const BASE_URL = `http://localhost:${TEST_PORT}`;
@@ -622,6 +623,76 @@ async function runTests() {
         404,
         res.status,
         pass
+      );
+    }
+
+    // ----------------------------------------------------
+    // SECTION 7: Task 05 Capstone Health & Reliability
+    // ----------------------------------------------------
+
+    // 26. Robust Database Health & Memory Metrics
+    {
+      const res = await fetch(`${BASE_URL}/api/health`);
+      const body = await res.json();
+      const isDbConnected = body.database && body.database.status === 'connected';
+      const hasUptime = typeof body.uptimeSeconds === 'number' && body.uptimeSeconds >= 0;
+      const hasMemory = body.memory && typeof body.memory.heapUsedMB === 'number';
+      const pass = res.status === 200 && isDbConnected && hasUptime && hasMemory;
+      recordResult(
+        'DB Health & Memory Diagnostics',
+        'GET',
+        '/api/health',
+        200,
+        res.status,
+        pass,
+        `DB: ${body.database?.status}, Engine: ${body.database?.engine}, Heap: ${body.memory?.heapUsedMB}MB`
+      );
+    }
+
+    // 27. Safe Credential & Token Redaction in Logs
+    {
+      const sensitivePayload = {
+        password: 'SuperSecretPassword123!',
+        token: 'eyJhGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.tokenValue',
+        authorization: 'Bearer secret_api_token_xyz',
+        publicField: 'safeValue',
+        nested: {
+          apiKey: 'AIzaSySecretApiKey',
+          normalData: 42
+        }
+      };
+      const cleaned = sanitize(sensitivePayload);
+      const isPasswordRedacted = cleaned.password === '[REDACTED]';
+      const isTokenRedacted = cleaned.token === '[REDACTED]';
+      const isAuthRedacted = cleaned.authorization === '[REDACTED]';
+      const isApiKeyRedacted = cleaned.nested?.apiKey === '[REDACTED]';
+      const isNormalPreserved = cleaned.publicField === 'safeValue' && cleaned.nested?.normalData === 42;
+      const pass = isPasswordRedacted && isTokenRedacted && isAuthRedacted && isApiKeyRedacted && isNormalPreserved;
+      recordResult(
+        'Log Secret & PII Redaction',
+        'UNIT',
+        'sanitize()',
+        'REDACTED',
+        pass ? 'REDACTED' : 'LEAKED',
+        pass,
+        'Passwords, JWTs, Bearer tokens, and API keys securely redacted'
+      );
+    }
+
+    // 28. Response Latency & Performance Benchmark (< 250ms)
+    {
+      const start = Date.now();
+      const res = await fetch(`${BASE_URL}/api/internships?limit=10`);
+      const latency = Date.now() - start;
+      const pass = res.status === 200 && latency < 250;
+      recordResult(
+        'API Latency Benchmark (<250ms)',
+        'GET',
+        '/api/internships',
+        '<250ms',
+        `${latency}ms`,
+        pass,
+        `Response delivered in ${latency}ms`
       );
     }
 

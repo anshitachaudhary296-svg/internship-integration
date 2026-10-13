@@ -1839,20 +1839,53 @@ ol {
   -webkit-text-fill-color: transparent;
 }
 
-@media (max-width: 640px) {
-  .floating-creator-badge {
-    bottom: 14px;
-    left: 14px;
-    padding: 6px 12px;
-    font-size: 0.76rem;
-  }
+/* ============================================================
+   Accessibility Touch Targets & Interactive Polish (WCAG 2.5.5)
+   ============================================================ */
+.action-btn--icon,
+.modal-close-btn,
+.card-bookmark-btn {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
+.domain-tab {
+  min-height: 44px;
+}
 
+.custom-select,
+.form-input {
+  min-height: 44px;
+}
 
+.btn-details,
+.btn-apply,
+.primary-btn,
+.secondary-btn,
+.submit-btn {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Enhanced Focus-Visible for High-Contrast Accessibility */
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+
+/* ============================================================
+   Responsive Breakpoints: Desktop, Tablet, Mobile
+   ============================================================ */
+
+/* Large Tablets & Small Desktops (<= 1024px) */
 @media (max-width: 1024px) {
   .hero-title {
-    font-size: 2.3rem;
+    font-size: 2.2rem;
   }
 
   .internships-grid {
@@ -1866,17 +1899,19 @@ ol {
   }
 }
 
+/* Tablets & Mobile Devices (<= 768px) */
 @media (max-width: 768px) {
   .site-header {
-    padding: 10px 0;
+    padding: 8px 0;
   }
 
   .header-container {
-    padding: 10px 16px;
+    padding: 8px 16px;
+    gap: 8px;
   }
 
   .brand-logo {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
   }
 
   .action-btn-text {
@@ -1887,26 +1922,30 @@ ol {
     display: none;
   }
 
+  .header-actions {
+    gap: 8px;
+  }
+
   .hero-section {
-    padding: 36px 16px 28px;
+    padding: 32px 16px 24px;
   }
 
   .hero-title {
-    font-size: 1.85rem;
+    font-size: 1.8rem;
   }
 
   .hero-subtitle {
-    font-size: 0.95rem;
-    margin-bottom: 24px;
+    font-size: 0.92rem;
+    margin-bottom: 20px;
   }
 
   .hero-metrics {
-    padding: 10px 16px;
-    gap: 12px;
+    padding: 10px 14px;
+    gap: 10px;
   }
 
   .metric-number {
-    font-size: 1.05rem;
+    font-size: 1rem;
   }
 
   .metric-label {
@@ -1915,12 +1954,15 @@ ol {
 
   .secondary-controls {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 12px;
   }
 
   .filter-dropdowns {
     width: 100%;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
   }
 
   .control-group {
@@ -1933,38 +1975,178 @@ ol {
 
   .internships-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .modal-dialog {
+    width: 94vw;
+    max-width: 600px;
+    max-height: 90vh;
+    margin: auto;
+  }
+
+  .modal-header {
+    padding: 16px 20px;
+  }
+
+  .modal-body {
+    padding: 20px;
+    gap: 18px;
   }
 
   .modal-meta-grid {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
+    padding: 12px;
   }
 
   .form-row {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .footer-top {
     grid-template-columns: 1fr;
+    gap: 24px;
   }
 
   .footer-bottom {
     flex-direction: column;
     align-items: flex-start;
+    gap: 16px;
   }
 }
 
+/* Compact Smartphones (<= 480px) */
 @media (max-width: 480px) {
+  .header-container {
+    padding: 8px 12px;
+  }
+
+  .brand-logo {
+    font-size: 1.05rem;
+  }
+
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .hero-section {
+    padding: 24px 12px 18px;
+  }
+
+  .hero-title {
+    font-size: 1.55rem;
+    line-height: 1.25;
+  }
+
+  .hero-subtitle {
+    font-size: 0.88rem;
+    margin-bottom: 16px;
+  }
+
+  .hero-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .metric-divider {
+    display: none;
+  }
+
+  .filter-section {
+    padding: 0 12px 18px;
+  }
+
   .search-input {
-    font-size: 0.9rem;
-    padding-left: 44px;
+    font-size: 0.88rem;
+    padding: 12px 42px 12px 44px;
   }
 
   .search-icon {
     left: 14px;
   }
 
+  .filter-dropdowns {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
   .card-actions {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .card-actions button {
+    width: 100%;
+  }
+
+  .modal-dialog {
+    width: 96vw;
+    max-height: 94vh;
+  }
+
+  .modal-header {
+    padding: 14px 16px;
+  }
+
+  .modal-role-title {
+    font-size: 1.15rem;
+  }
+
+  .modal-company-name {
+    font-size: 0.85rem;
+  }
+
+  .modal-body {
+    padding: 16px 14px;
+    gap: 16px;
+  }
+
+  .modal-meta-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .apply-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .modal-actions {
+    flex-direction: column-reverse;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .modal-actions button {
+    width: 100%;
+  }
+
+  .floating-creator-badge {
+    bottom: 10px;
+    left: 10px;
+    padding: 5px 10px;
+    font-size: 0.72rem;
+  }
+}
+
+/* Micro Mobile (<= 360px) */
+@media (max-width: 360px) {
+  .modal-meta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-logo {
+    font-size: 0.95rem;
+  }
+
+  .hero-metrics {
     grid-template-columns: 1fr;
   }
 }

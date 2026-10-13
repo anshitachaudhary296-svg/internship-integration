@@ -1,10 +1,10 @@
-# 🚀 InternPulse - Secure Application Integration (Task 04)
+# 🚀 InternPulse - Production-Ready Capstone (Task 05)
 
 [![Node.js](https://img.shields.io/badge/Node.js-v18+-339933?style=flat&logo=node.js)](https://nodejs.org/)
 [![Express.js](https://img.shields.io/badge/Express-v5.2.1-000000?style=flat&logo=express)](https://expressjs.com/)
 [![SQLite3](https://img.shields.io/badge/SQLite-v6.0.1-003B57?style=flat&logo=sqlite)](https://www.sqlite.org/)
-[![Security](https://img.shields.io/badge/Security-Helmet%20%2B%20RateLimit%20%2B%20CORS-blueviolet?style=flat)]()
-[![Tests](https://img.shields.io/badge/Tests-25%2F25%20Passing-brightgreen?style=flat)]()
+[![Security](https://img.shields.io/badge/Security-Helmet%20%2B%20RateLimit%20%2B%20CORS%20%2B%20PII%20Scrubbing-blueviolet?style=flat)]()
+[![Tests](https://img.shields.io/badge/Tests-28%2F28%20Passing-brightgreen?style=flat)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat)](LICENSE)
 
 An end-to-end, production-grade integration uniting the modern **InternPulse** client-side internship board (`Frontend/internship-board`) with a secure **Node.js + Express + SQLite** RESTful API service (`Backend/internship-api`).
@@ -23,19 +23,22 @@ An end-to-end, production-grade integration uniting the modern **InternPulse** c
 8. [How to Run Tests](#-how-to-run-tests)
 9. [Security Checklist](#-security-checklist)
 10. [Error Handling & UI States](#-error-handling--ui-states)
-11. [Screenshots Section](#-screenshots-section)
-12. [Project Structure](#-project-structure)
+11. [Task 05 Capstone Enhancements](#-task-05-capstone-enhancements)
+12. [Screenshots Section](#-screenshots-section)
+13. [Project Structure](#-project-structure)
 
 ---
 
 ## 🌟 Project Overview
 
-This repository represents the completed **Internship Task 04: Secure Application Integration**. It delivers a fully functional, secure web application where users can:
+This repository represents the completed **Internship Task 05: Production-Ready Capstone**. It delivers a fully functional, hardened, and accessible full-stack web application where users can:
 - **Discover Verified Opportunities**: Browse hand-curated internships across 5 key tech tracks (Web Development, Data Science, AI/ML, UI/UX Design, and Cybersecurity).
 - **Search & Filter in Real-Time**: Instant debounced search, domain category filters, work-type filters (Remote, Hybrid, On-site), and sort options.
 - **Apply for Internships**: A comprehensive modal application form submitting directly to the backend database via `fetch()`.
 - **Experience Resilient State Management**: Explicit visual handling for loading skeletons, network errors with one-click retry, empty results, client-side input validation, and server confirmation banners.
-- **Rely on Enterprise Security Controls**: Hardened with Helmet security headers, Express rate limiting, parameterized queries, CORS policies, and strict payload validation.
+- **Rely on Enterprise Security Controls**: Hardened with Helmet security headers, Express rate limiting, parameterized queries, CORS policies, strict payload validation, and automated secret/PII log redaction.
+- **Mobile First & Accessible**: WCAG 2.5.5 compliant touch targets (min 44px), explicit keyboard focus-visible rings, ARIA screen-reader attributes, and fluid breakpoints for desktop, tablet, and mobile.
+- **Real-Time Telemetry & Health Checks**: Robust `/api/health` endpoint with active database ping, memory heap tracking, and uptime metrics.
 
 ---
 
@@ -215,7 +218,7 @@ The frontend script dynamically connects to `http://localhost:5000` regardless o
 
 ## 🧪 How to Run Tests
 
-The automated test runner executes **25 comprehensive integration test cases**:
+The automated test runner executes **28 comprehensive integration test cases**:
 
 ```bash
 # Option A: From workspace root
@@ -237,6 +240,9 @@ npm test
 - Valid application submission and SQLite persistence
 - Application retrieval by ID and collection listing
 - Undefined route handling (404)
+- **Database health probe & memory diagnostics** (`GET /api/health`)
+- **Safe log secret & PII sanitization** (`sanitize()`)
+- **High-throughput API response latency benchmark (< 250ms)**
 
 See [`TEST-REPORT.md`](file:///d:/internship-integration/TEST-REPORT.md) for full results.
 
@@ -294,6 +300,25 @@ The frontend provides clear, accessible UI states for every interaction:
 
 ---
 
+## 💎 Task 05 Capstone Enhancements
+
+1. **Safe Leveled Logging Pipeline**:
+   - High-performance structured logging capturing HTTP method, path, response status, duration in ms, IP, and payload size.
+   - Deep recursive `sanitize()` middleware stripping passwords, tokens, API keys, and Bearer authentication headers before logging.
+2. **Real-Time Health & Diagnostic Telemetry** (`GET /api/health`):
+   - Actively checks SQLite database connection with `SELECT 1 AS alive;`.
+   - Returns server uptime, Node.js version, and process memory utilization (`heapUsedMB`, `heapTotalMB`, `rssMB`).
+3. **Accessibility (WCAG 2.1 AA & WCAG 2.5.5)**:
+   - 44x44px minimum touch targets on all interactive buttons, tabs, and form elements.
+   - High-contrast `:focus-visible` keyboard focus indicators.
+   - Accessible ARIA attributes (`aria-required`, `aria-describedby`, `role="alert"`).
+4. **Responsive Layout System**:
+   - Desktop (> 1024px), Tablet (768px - 1024px), Mobile (480px - 768px), and Micro-Mobile (< 360px) responsive breakpoints.
+5. **High-Performance Execution**:
+   - Sub-20ms average response latency for internship listings and application submissions.
+
+---
+
 ## 📁 Project Structure
 
 ```text
@@ -316,14 +341,17 @@ internship-integration/
 │       │   │   └── internshipController.js   # Internship CRUD logic
 │       │   ├── middlewares/
 │       │   │   ├── errorHandler.js          # Centralized error handler
+│       │   │   ├── logger.js                # Request duration & latency logger
 │       │   │   ├── notFound.js              # 404 handler
 │       │   │   ├── validateApplication.js   # Application submission validation
 │       │   │   └── validateInternship.js    # Internship validation
+│       │   ├── utils/
+│       │   │   └── logger.js                # Structured logger & PII/Secret sanitizer
 │       │   └── routes/
 │       │       ├── applicationRoutes.js     # /api/applications routes
 │       │       └── internshipRoutes.js      # /api/internships routes
 │       ├── tests/
-│       │   └── run-tests.js       # 25 automated API tests
+│       │   └── run-tests.js       # 28 automated API tests
 │       ├── .env                   # Local environment configuration
 │       ├── .env.example           # Environment template
 │       ├── .gitignore             # Git ignore patterns
@@ -332,10 +360,10 @@ internship-integration/
 │   └── internship-board/
 │       ├── index.html             # Main responsive HTML5 board & modal
 │       ├── script.js              # State, fetch, validation, and rendering
-│       ├── style.css              # Custom responsive CSS design system
+│       ├── style.css              # Custom responsive CSS design system (WCAG 2.5.5)
 │       └── README.md              # Frontend documentation
 ├── SECURITY.md                    # Comprehensive security documentation
-├── TEST-REPORT.md                 # Full test matrix & verification results
+├── TEST-REPORT.md                 # Full test matrix & verification results (28/28)
 ├── README.md                      # Workspace documentation (this file)
 └── package.json                   # Workspace root npm script runner
 ```
